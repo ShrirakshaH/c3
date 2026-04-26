@@ -12,7 +12,7 @@ steps:
 - uses: actions/setup-java@v4
 with:
 distribution: 'temurin'
-java-version: '11'
+java-version: '21'
 - name: Build using Maven
 run: mvn clean install
 working-directory: demo
