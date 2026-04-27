@@ -6,9 +6,10 @@ pipeline {
     stages {
         stage('CHECKOUT') {
             steps {
-                git 'https://github.com/ShrirakshaH/dokcer_demo.git'
-            }
+                git branch: 'main', url: 'https://github.com/ShrirakshaH/dokcer_demo.git'
+                  }
         }
+
         stage('Build') {
             steps {
                 dir('demo'){
