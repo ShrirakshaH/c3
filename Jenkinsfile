@@ -6,25 +6,36 @@ pipeline {
     stages {
         stage('CHECKOUT') {
             steps {
-                // Point this to your C3 repository
+                // Clean the workspace first to avoid old folder confusion
+                cleanWs()
                 git branch: 'main', url: 'https://github.com/ShrirakshaH/c3.git'
             }
         }
         stage('Build') {
             steps {
-                // If your pom.xml is sitting in the root of C3, remove the dir('demo') wrapper
-                // If you have a 'demo' folder inside C3, keep it like this:
-                dir('demo'){
+                // We move into demo and run Maven in one block
+                dir('demo') {
                     bat 'mvn clean install'
                 }
             }
         }
         stage('Test') {
             steps {
-                dir('demo'){
+                dir('demo') {
                     bat 'mvn test'
                 }
             }
+        }
+    }
+    post {
+        always {
+            // This matches the ID you created in Manage Jenkins -> System
+            slackSend (
+                tokenCredentialId: 'slack-token', 
+                channel: '#all-raksha',
+                color: currentBuild.currentResult == 'SUCCESS' ? 'good' : 'danger',
+                message: "Build ${env.JOB_NAME} - #${env.BUILD_NUMBER}: ${currentBuild.currentResult}"
+            )
         }
     }
 }
